@@ -1,0 +1,6 @@
+.stack*
+.idea
+.git
+*.o
+*.hi
+local
