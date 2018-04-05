@@ -1,4 +1,4 @@
-module Perm where
+module FirstLab where
 
 
 takeOut list nth = (list !! nth, take nth list ++ drop (nth + 1) list)
