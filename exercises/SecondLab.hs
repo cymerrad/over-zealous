@@ -27,3 +27,19 @@ positions c str =
                         ((val + off):acc) 
                         (off+val+1)
 
+inits list = map (( \f -> f list) . take) [0 .. length list]
+
+incAll :: [[Int]] -> [[Int]]
+incAll ll =
+    [ [ succ el | el <- inside ]
+    | inside <- ll
+    ]
+
+nubWFilter :: (Eq a) => [a] -> [a]
+nubWFilter list =
+    tailRecObvi list []
+    where
+        tailRecObvi [] acc = acc
+        tailRecObvi (x:xs) acc
+            | null xs = x:acc
+            | otherwise = tailRecObvi (filter (x /=) xs) (x:acc)
