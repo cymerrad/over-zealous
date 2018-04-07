@@ -1,6 +1,6 @@
 module ThirdLab where
 
-import FirstLab
+import FirstLab ( flatten )
 
 data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Eq, Ord, Show)
 
@@ -15,13 +15,20 @@ lefties = flatten
     | k <- [1 .. ] 
     ]
 
--- listToTree :: [a] -> Tree a
--- -- listToTree [] = Empty
--- -- listToTree [x] = Node x Empty Empty
--- listToTree list = 
---     lttRec $ zip list [1 ..]
---     where
---         lttRec listP
+leftBranch :: [Maybe a] -> [Maybe a]
+leftBranch list =
+    map snd (filter (\p -> fst p `elem` take (length list) lefties) (zip [1 .. ] list))
+    
+
+rightBranch list = []
+
+listToTree :: [Maybe a] -> Tree a
+listToTree [] = Empty
+-- listToTree [x] = Node x Empty Empty
+listToTree (x:xs) = 
+    case x of
+        Nothing -> Empty
+        Just v -> Node v (listToTree (leftBranch xs)) (listToTree (rightBranch xs))
 
 -- depth :: Tree a -> Int
 -- depth t =

@@ -61,7 +61,7 @@ sort3 (x, y, z) =
     )
 
 
--- this below is a clusterfuck, because of Int/Integer/Integral/Float misunderstanding (of mine presumably)
+-- this below is a clusterfuck because of Int/Integer/Integral/Float misunderstanding (of mine presumably)
 
 -- trojki pitagorejskie
 range :: Integer -> [Float]
