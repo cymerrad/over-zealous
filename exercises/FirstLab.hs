@@ -60,12 +60,18 @@ sort3 (x, y, z) =
         (z,y,x)
     )
 
+
+-- this below is a clusterfuck, because of Int/Integer/Integral/Float misunderstanding (of mine presumably)
+
 -- trojki pitagorejskie
-range n = [1 .. n]
-checkTriple x y z = ( x**2 + y**2 ) == z**2
-triads :: Int -> [(Int,Int,Int)]
+range :: Integer -> [Float]
+range n = [1.0 .. fromInteger n]
+-- checkTriple :: Int -> Int -> Int -> Bool
+checkTriple x y z = ( x ** 2 + y ** 2 ) == z**2
+triads :: Integer -> [(Int,Int,Int)]
 triads n =
     [ (floor x, floor y, floor z)
+    -- [ (x,y,z)
     | x <- range n
     , y <- range n
     , z <- range n
