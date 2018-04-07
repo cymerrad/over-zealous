@@ -19,8 +19,9 @@ leftBranch :: [Maybe a] -> [Maybe a]
 leftBranch list =
     map snd (filter (\p -> fst p `elem` take (length list) lefties) (zip [1 .. ] list))
     
-
-rightBranch list = []
+rightBranch :: [Maybe a] -> [Maybe a]
+rightBranch list = 
+    map snd (filter (\p -> fst p `notElem` take (length list) lefties) (zip [1 .. ] list))
 
 listToTree :: [Maybe a] -> Tree a
 listToTree [] = Empty
