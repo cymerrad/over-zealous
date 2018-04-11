@@ -41,7 +41,8 @@ depth t =
 instance Show a => Show (Tree a) where
     show t = show (stratification t (Map.empty) 0 0)
 
-stratification :: Tree a -> Map.Map Int [(a, Int)] -> Int -> Int -> Map.Map Int [(a, Int)]
+type Strat a = Map.Map Int [(a, Int)]
+stratification :: Tree a -> Strat a -> Int -> Int -> Strat a
 stratification t acc d off =
     case t of
         Empty -> acc
@@ -50,5 +51,12 @@ stratification t acc d off =
                 mLeft = stratification left acc (d+1) (2*off)
             in
                 Map.insertWith (flip (++)) d [(v,off)] (stratification right mLeft (d+1) (2*off+1))
+
+-- drawFromStrat :: Show a => Strat a -> String
+-- drawFromStrat strat =
+--     let
+--         rows = 2 ** (Map.findMax strat)
+--     in
+        
 
 tT1 = listToTree [ Just k | k <- [1 .. 20]]
