@@ -39,24 +39,39 @@ depth t =
         Node _ t1 t2 -> max (depth t1) (depth t2) + 1
 
 instance Show a => Show (Tree a) where
-    show t = show (stratification t (Map.empty) 0 0)
+    show t = show (coordinification t (Map.empty) 0 0)
 
-type Strat a = Map.Map Int [(a, Int)]
-stratification :: Tree a -> Strat a -> Int -> Int -> Strat a
-stratification t acc d off =
+type Coord a = Map.Map (Int, Int) a
+coordinification :: Tree a -> Coord a -> Int -> Int -> Coord a
+coordinification t acc d off =
     case t of
         Empty -> acc
         Node v left right ->
             let
-                mLeft = stratification left acc (d+1) (2*off)
+                mLeft = coordinification left acc (d+1) (2*off)
             in
-                Map.insertWith (flip (++)) d [(v,off)] (stratification right mLeft (d+1) (2*off+1))
+                Map.insert (d,off) v (coordinification right mLeft (d+1) (2*off+1))
 
--- drawFromStrat :: Show a => Strat a -> String
--- drawFromStrat strat =
---     let
---         rows = 2 ** (Map.findMax strat)
---     in
-        
+padLeftToSize :: String -> Char -> Int -> String
+padLeftToSize str c n | (length str - n) >= 0 = str | otherwise = padLeftToSize (c : str) c n
+
+drawFromCoords :: Show a => Coord a -> [[String]]
+drawFromCoords coords =
+    let
+        depth = fst . fst . Map.findMax $ coords
+        rows = floor(2 ** depth)
+        maxNodeSize = Map.foldl (\comp val -> (max (length (show val) ) comp)) 0 coords
+    in
+        [ 
+            [ padLeftToSize (
+                case (Map.lookup (d,r) coords) of
+                    Nothing -> ""
+                    Just v -> show v
+                    ) ' ' maxNodeSize
+            | d <- [1 .. depth]
+            ]
+        | r <- [1 .. rows]
+        ]
 
 tT1 = listToTree [ Just k | k <- [1 .. 20]]
+tCoords = coordinification tT1 Map.empty 0 0
