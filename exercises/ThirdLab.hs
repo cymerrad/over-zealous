@@ -39,18 +39,17 @@ depth t =
         Node _ t1 t2 -> max (depth t1) (depth t2) + 1
 
 instance Show a => Show (Tree a) where
-    show t = show (showRec t (Map.empty) 0)
+    show t = show (stratification t (Map.empty) 0)
 
-showRec :: Tree a -> Map.Map Int [a] -> Int -> Map.Map Int [a]
-showRec t acc d =
+stratification :: Tree a -> Map.Map Int [a] -> Int -> Map.Map Int [a]
+stratification t acc d =
     case t of
         Empty -> acc
         Node v left right ->
             let
-                mLeft = showRec left acc (d+1)
-                -- mRight = showRec right acc (d+1)
+                mLeft = stratification left acc (d+1)
+                -- mRight = stratification right acc (d+1)
             in
-                Map.insertWith (++) d [v] (showRec right mLeft (d+1))
+                Map.insertWith (flip (++)) d [v] (stratification right mLeft (d+1))
 
---  instance Eq a => Eq (Tree a) where
---     t1 == t2 = ...
+tT1 = listToTree [ Just k | k <- [1 .. 20]]
