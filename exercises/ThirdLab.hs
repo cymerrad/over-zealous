@@ -39,7 +39,7 @@ depth t =
         Node _ t1 t2 -> max (depth t1) (depth t2) + 1
 
 instance Show a => Show (Tree a) where
-    show t = show (coordinification t (Map.empty) 0 0)
+    show t = show (drawFromCoords (coordinification t (Map.empty) 0 0))
 
 type Coord a = Map.Map (Int, Int) a
 coordinification :: Tree a -> Coord a -> Int -> Int -> Coord a
@@ -59,19 +59,39 @@ drawFromCoords :: Show a => Coord a -> [[String]]
 drawFromCoords coords =
     let
         depth = fst . fst . Map.findMax $ coords
-        rows = floor(2 ** fromIntegral depth)
+        rows = floor(2 ** fromIntegral depth) + 1
         maxNodeSize = Map.foldl (\comp val -> (max (length (show val) ) comp)) 0 coords
     in
         [ 
             [ padLeftToSize (
-                case (Map.lookup (d,r) coords) of
+                case Map.lookup (d,r) coords of
                     Nothing -> ""
                     Just v -> show v
                     ) ' ' maxNodeSize
-            | d <- [1 .. depth]
+            | d <- [0 .. depth - 1]
             ]
-        | r <- [1 .. rows]
+        | r <- [0 .. rows - 1]
         ]
 
-tT1 = listToTree [ Just k | k <- [1 .. 20]]
+tT1 = listToTree [ Just k | k <- [1 .. 31]]
 tCoords = coordinification tT1 Map.empty 0 0
+-- putStr $ unlines $ map (foldr ((++) . ( " " ++)) "") lines
+
+treeSkeleton :: Int -> Map.Map (Int, Int) Bool
+treeSkeleton depth =
+    let
+        rows = floor(2 ** fromIntegral depth)
+        start = quot rows 2
+    in
+        treeSkelRec 0 start (quot rows 2) (depth,start,rows) Map.empty
+    where
+        treeSkelRec :: Int -> Int -> Int -> (Int,Int,Int) -> Map.Map (Int,Int) Bool -> Map.Map (Int,Int) Bool
+        treeSkelRec dep pos recRow junk@(depth,start,rows) map
+            | dep < depth =
+                let
+                    off = quot recRow 2
+                    mLeft = treeSkelRec (dep+1) (pos+off) off junk (Map.insert (dep,pos) True map)
+                in
+                    treeSkelRec (dep+1) (pos-off) off junk mLeft
+            | otherwise = 
+                foldl (\acc l -> Map.insert (dep,l) True acc) map ([0 .. start-1] ++ [start+1 .. rows])
