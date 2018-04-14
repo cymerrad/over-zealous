@@ -59,7 +59,7 @@ drawFromCoords :: Show a => Coord a -> [[String]]
 drawFromCoords coords =
     let
         depth = fst . fst . Map.findMax $ coords
-        rows = floor(2 ** depth)
+        rows = floor(2 ** fromIntegral depth)
         maxNodeSize = Map.foldl (\comp val -> (max (length (show val) ) comp)) 0 coords
     in
         [ 
