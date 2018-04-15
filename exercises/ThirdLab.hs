@@ -3,7 +3,7 @@ module ThirdLab where
 import FirstLab ( flatten )
 import qualified Data.Map as Map
 
-data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Eq, Ord, Show)
+data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Eq, Ord)--, Show)
 
 safeGet :: [a] -> Int -> Maybe a
 safeGet l i | length l <= i = Nothing | otherwise = Just (l!!i)
@@ -38,9 +38,9 @@ depth t =
         Empty -> -1 -- lol
         Node _ t1 t2 -> max (depth t1) (depth t2) + 1
 
--- instance Show a => Show (Tree a) where
---     show t = 
---         show (drawFromCoords (coordify t))
+instance Show a => Show (Tree a) where
+    show t =
+        unlines (map show (linesFromCoords (coordify t)))
 
 type Coord a = Map.Map (Int, Int) a
 coordify :: Tree a -> Coord a
@@ -64,8 +64,6 @@ coordinification t acc d pos off fix@(last,version)=
         Node v l r ->
             let
                 newOff = quot off 2 
-                -- left = if d==last then (if version == 1 then pos + 1 else pos) else pos+newOff
-                -- right = if d==last then (if version == -1 then pos - 1 else pos) else pos-newOff
                 (left,right) = if d == last - 1 then (if version == 1 then pos + 1 else pos,if version == -1 then pos - 1 else pos) else (pos+newOff, pos-newOff)
                 mLeft = coordinification l acc (d+1) left newOff fix
                 mRight = coordinification r acc (d+1) right newOff fix
@@ -75,20 +73,21 @@ coordinification t acc d pos off fix@(last,version)=
 padLeftToSize :: String -> Char -> Int -> String
 padLeftToSize str c n | (length str - n) >= 0 = str | otherwise = padLeftToSize (c : str) c n
 
-drawFromCoords :: Show a => Coord a -> [[String]]
-drawFromCoords coords =
+linesFromCoords :: Show a => Coord a -> [String]
+linesFromCoords coords =
     let
         depth = fst . fst . Map.findMax $ coords
         rows = floor(2 ** fromIntegral depth) + 1
         maxNodeSize = Map.foldl (\comp val -> (max (length (show val) ) comp)) 0 coords
     in
+        map (foldr ((++) . ( " " ++)) "")
         [ 
             [ padLeftToSize (
                 case Map.lookup (d,r) coords of
                     Nothing -> ""
                     Just v -> show v
                     ) ' ' maxNodeSize
-            | d <- [0 .. depth - 1]
+            | d <- [0 .. depth]
             ]
         | r <- [0 .. rows - 1]
         ]
