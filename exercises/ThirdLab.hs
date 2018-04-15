@@ -3,7 +3,7 @@ module ThirdLab where
 import FirstLab ( flatten )
 import qualified Data.Map as Map
 
-data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Eq, Ord) --, Show)
+data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Eq, Ord, Show)
 
 safeGet :: [a] -> Int -> Maybe a
 safeGet l i | length l <= i = Nothing | otherwise = Just (l!!i)
@@ -35,22 +35,42 @@ listToTree (x:xs) =
 depth :: Tree a -> Int
 depth t =
     case t of
-        Empty -> 0
+        Empty -> -1 -- lol
         Node _ t1 t2 -> max (depth t1) (depth t2) + 1
 
-instance Show a => Show (Tree a) where
-    show t = show (drawFromCoords (coordinification t (Map.empty) 0 0))
+-- instance Show a => Show (Tree a) where
+--     show t = 
+--         show (drawFromCoords (coordify t))
 
 type Coord a = Map.Map (Int, Int) a
-coordinification :: Tree a -> Coord a -> Int -> Int -> Coord a
-coordinification t acc d off =
+coordify :: Tree a -> Coord a
+coordify t =
+    case t of
+        Empty -> Map.empty
+        Node v t1 t2 ->
+            let
+                dep = depth t
+                start = floor (2 ** (fromIntegral dep - 1))
+                offset = quot start 2
+                leftBranch = coordinification t1 Map.empty 1 (start+offset) offset (dep,1)
+                rightBranch = coordinification t2 Map.empty 1 (start-offset) offset (dep,-1)
+            in    
+                Map.insert (0,start) v (Map.union leftBranch rightBranch)
+
+coordinification :: Tree a -> Coord a -> Int -> Int -> Int -> (Int,Int) -> Coord a
+coordinification t acc d pos off fix@(last,version)=
     case t of
         Empty -> acc
-        Node v left right ->
+        Node v l r ->
             let
-                mLeft = coordinification left acc (d+1) (2*off)
+                newOff = quot off 2 
+                -- left = if d==last then (if version == 1 then pos + 1 else pos) else pos+newOff
+                -- right = if d==last then (if version == -1 then pos - 1 else pos) else pos-newOff
+                (left,right) = if d == last - 1 then (if version == 1 then pos + 1 else pos,if version == -1 then pos - 1 else pos) else (pos+newOff, pos-newOff)
+                mLeft = coordinification l acc (d+1) left newOff fix
+                mRight = coordinification r acc (d+1) right newOff fix
             in
-                Map.insert (d,off) v (coordinification right mLeft (d+1) (2*off+1))
+                Map.insert (d,pos) v (Map.union mRight mLeft)
 
 padLeftToSize :: String -> Char -> Int -> String
 padLeftToSize str c n | (length str - n) >= 0 = str | otherwise = padLeftToSize (c : str) c n
@@ -73,25 +93,7 @@ drawFromCoords coords =
         | r <- [0 .. rows - 1]
         ]
 
+tTsmall = listToTree [Just k | k <- [1 .. 7]]
 tT1 = listToTree [ Just k | k <- [1 .. 31]]
 tCoords = coordinification tT1 Map.empty 0 0
 -- putStr $ unlines $ map (foldr ((++) . ( " " ++)) "") lines
-
-treeSkeleton :: Int -> Map.Map (Int, Int) Bool
-treeSkeleton depth =
-    let
-        rows = floor(2 ** fromIntegral depth)
-        start = quot rows 2
-    in
-        treeSkelRec 0 start (quot rows 2) (depth,start,rows) Map.empty
-    where
-        treeSkelRec :: Int -> Int -> Int -> (Int,Int,Int) -> Map.Map (Int,Int) Bool -> Map.Map (Int,Int) Bool
-        treeSkelRec dep pos recRow junk@(depth,start,rows) map
-            | dep < depth =
-                let
-                    off = quot recRow 2
-                    mLeft = treeSkelRec (dep+1) (pos+off) off junk (Map.insert (dep,pos) True map)
-                in
-                    treeSkelRec (dep+1) (pos-off) off junk mLeft
-            | otherwise = 
-                foldl (\acc l -> Map.insert (dep,l) True acc) map ([0 .. start-1] ++ [start+1 .. rows])
