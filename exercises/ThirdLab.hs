@@ -146,25 +146,9 @@ maybeCharToInt '8' = Just 8
 maybeCharToInt '9' = Just 9
 maybeCharToInt _ = Nothing
 
-
-charToInt :: Char -> Int
-charToInt '0' = 0
-charToInt '1' = 1
-charToInt '2' = 2
-charToInt '3' = 3
-charToInt '4' = 4
-charToInt '5' = 5
-charToInt '6' = 6
-charToInt '7' = 7
-charToInt '8' = 8
-charToInt '9' = 9
-charToInt _ = 0
-
 wordToNumber :: String -> Maybe Int
-wordToNumber str =
-    if (2 + length str) == (magic) then Just res else Nothing 
-    where 
-        (res, magic) = foldl (\(acc,k) chr -> if isDigit chr then (acc + 10^k * (charToInt chr), k + 1) else (acc,k+2)) (0,0) (reverse str ++ ";")
-    
+wordToNumber2 str = fst $
+    foldl (\(acc, k) chr -> (maybeCharToInt chr >>= \x -> acc >>= \y -> return (y + 10^k * x), k + 1) ) (Just 0, 0) (reverse str) 
+
 -- readInts :: String -> [Int]
 
