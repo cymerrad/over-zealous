@@ -158,3 +158,8 @@ readInts2 str = foldl (\cur new -> case cur of
             Nothing -> Left ("Invalid token " ++ new)
             Just x -> Right (lst ++ [x])
     ) (Right []) (words str)
+
+sumInts :: String -> String
+sumInts str = case readInts2 str of
+    Left msg -> msg
+    Right ints -> show $ sum ints

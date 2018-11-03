@@ -1,6 +1,6 @@
 .stack*
 .idea
 .git
-*.o
-*.hi
+**/*.o
+**/*.hi
 local
