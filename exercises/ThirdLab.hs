@@ -1,6 +1,6 @@
 module ThirdLab where
 
-import Prelude hiding(Either(..))
+-- import Prelude hiding(Either(..))
 import FirstLab ( flatten )
 import qualified Data.Map as Map
 import Data.Char ( isDigit, isSpace )
@@ -103,11 +103,11 @@ tCoords = coordinification tT1 Map.empty 0 0
 
 
 -- zadanie 2
-data Either a b = Left a | Right b deriving (Show)
+-- data Either a b = Left a | Right b deriving (Show)
 
-instance Functor (Either e) where
-    -- fmap :: (a -> b) -> Either e a -> Either e b
-    fmap f (Right a0) = Right $ f a0
+-- instance Functor (Either e) where
+--     -- fmap :: (a -> b) -> Either e a -> Either e b
+--     fmap f (Right a0) = Right $ f a0
 
 reverseRight :: Either e [a] -> Either e [a]
 -- reverseRight (Left e0) = Left e0
@@ -149,5 +149,12 @@ wordToNumber str = fst $
     foldl (\(acc, k) chr -> (maybeCharToInt chr >>= \x -> acc >>= \y -> return (y + 10^k * x), k + 1) ) (Just 0, 0) (reverse str) 
 
 readInts :: String -> [Int]
-readInts str = catMaybes $ map wordToNumber (words str)
+readInts str = catMaybes $ map readMaybe (words str)
 
+readInts2 :: String -> Either String [Int]
+readInts2 str = foldl (\cur new -> case cur of 
+        Left msg -> Left msg
+        Right lst -> case readMaybe new of
+            Nothing -> Left ("Invalid token " ++ new)
+            Just x -> Right (lst ++ [x])
+    ) (Right []) (words str)
