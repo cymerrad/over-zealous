@@ -4,6 +4,8 @@ import Prelude hiding(Either(..))
 import FirstLab ( flatten )
 import qualified Data.Map as Map
 import Data.Char ( isDigit, isSpace )
+import Data.Maybe ( catMaybes )
+import Text.Read ( readMaybe )
 
 data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Eq, Ord)--, Show)
 
@@ -129,10 +131,6 @@ instance Pointed Tree where
     pure a = Node a Empty Empty 
 
 -- zadanie 3
-splitIntoWords :: String -> [String]
-splitIntoWords = (\pair -> fst pair ++ [snd pair]) .
-    foldl (\(aggr, cur) newChar -> if isSpace newChar then (aggr ++ [cur], "") else (aggr, cur ++ [newChar])) ([],"")
-
 maybeCharToInt :: Char -> Maybe Int
 maybeCharToInt '0' = Just 0
 maybeCharToInt '1' = Just 1
@@ -147,8 +145,9 @@ maybeCharToInt '9' = Just 9
 maybeCharToInt _ = Nothing
 
 wordToNumber :: String -> Maybe Int
-wordToNumber2 str = fst $
+wordToNumber str = fst $
     foldl (\(acc, k) chr -> (maybeCharToInt chr >>= \x -> acc >>= \y -> return (y + 10^k * x), k + 1) ) (Just 0, 0) (reverse str) 
 
--- readInts :: String -> [Int]
+readInts :: String -> [Int]
+readInts str = catMaybes $ map wordToNumber (words str)
 
