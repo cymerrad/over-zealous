@@ -24,34 +24,41 @@ instance Num Exp where
   signum x = undefined
   fromInteger x = EInt x
 
-testExp2 :: Exp
-testExp2 = (2 + 2) * 3
+testExprs :: [Exp]
+testExprs =
+  [ EMul (EInt 5) (EMul (EVar "t") (EVar "t") ) 
+  , EMul (EAdd (EInt (-2)) (EInt 2)) (EVar "x") 
+  ]
 
 simpl :: Exp -> Exp
 simpl x = case x of
-  EMul y z -> if sy == EInt 0 || sz == EInt 0 then EInt 0 else 
-    if sy == EInt 1 then sz else
-      if sz == EInt 1 then sy else
-        EMul sy sz
-        where
-          (sy, sz) = (simpl y, simpl z)
-  EAdd y z -> if sy == EInt 0 then sz else
-    if sz == EInt 0 then sy else
-      EAdd sy sz
-      where
-        (sy, sz) = (simpl y, simpl z)
-  _ -> x
-  
-simpl2 :: Exp -> Exp
-simpl2 x = case x of
   EMul (EInt 0) y -> EInt 0
   EMul y (EInt 0) -> EInt 0
   EMul (EVar y) (EInt 1) -> EVar y
   EMul (EInt 1) (EVar y) -> EVar y
+  EMul y z -> EMul (simpl y) (simpl z)
+
   EAdd (EInt 0) y -> simpl y
   EAdd y (EInt 0) -> simpl y
+  EAdd (EInt y) (EInt z) -> EInt (y+z)
+  EAdd (EVar w) (EVar u) -> if w == u then EMul 2 (EVar w) else x
+  EAdd y z -> EAdd (simpl y) (simpl z)
+
+  ESub (EInt y) (EInt z) -> EInt (y-z)
+  ESub y z -> ESub (simpl y) (simpl z)
+
+  ELet w y z -> ELet w (simpl y) (simpl z)
 
   _ -> x
 
-testExp3 :: Exp
-testExp3 = (2 - (2 + 0)) * 3
+
+deriv :: String -> Exp -> Exp
+deriv var exp = case exp of 
+  EAdd y z -> EAdd (deriv var y) (deriv var z)
+  ESub y z -> ESub (deriv var y) (deriv var z)
+  EMul y z -> EAdd (EMul (deriv var y) z) (EMul y (deriv var z))
+
+  EVar w -> if w == var then EInt 1 else EVar w
+  EInt y -> EInt 0
+
+  _ -> exp
