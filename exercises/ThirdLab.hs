@@ -163,3 +163,35 @@ sumInts :: String -> String
 sumInts str = case readInts2 str of
     Left msg -> msg
     Right ints -> show $ sum ints
+
+-- "dla znudzonych"
+infixl 4 <*>
+class Pointed f => Applicative f where
+    (<*>) :: f(a->b) -> f a -> f b 
+
+instance ThirdLab.Applicative Maybe where
+    (<*>) (Just f) (Just a0) = Just (f a0)
+    (<*>) Nothing _ = Nothing
+    (<*>) _ Nothing = Nothing
+
+instance ThirdLab.Applicative [] where
+    (<*>) (f:fs) (a0:as) = f a0 : (ThirdLab.<*>) fs as
+    (<*>) [] _ = []
+    (<*>) _ [] = []
+
+-- v = Just 1
+-- u = Just 2
+-- f :: Int -> Int
+-- f = (4 +) 
+-- w = 3
+-- x :: Int
+-- x = 0
+-- y = 0
+
+-- tests :: [Bool]
+-- tests = 
+--     [ (ThirdLab.pure id ThirdLab.<*> v) == v 
+--     , (ThirdLab.pure (.) ThirdLab.<*> u ThirdLab.<*> v ThirdLab.<*> w) == (u ThirdLab.<*> (v ThirdLab.<*> w) )
+--     , (ThirdLab.pure f ThirdLab.<*> ThirdLab.pure x) == (ThirdLab.pure (f x) :: Maybe Int )
+--     , (u ThirdLab.<*> ThirdLab.pure y) == (ThirdLab.pure ($ y) ThirdLab.<*> u )
+--     ]
