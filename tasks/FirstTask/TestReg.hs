@@ -1,7 +1,12 @@
+#!/usr/bin/env stack
+{- stack runghc 
+  --package QuickCheck
+-}
 -- {-# LANGUAGE NoMonomorphismRestriction #-}
 import Test.QuickCheck hiding((===))
 import Control.Monad(liftM2)
 import Control.Applicative((<$>),(<*>))
+import Prelude hiding((<>))
 
 import Mon
 import Reg

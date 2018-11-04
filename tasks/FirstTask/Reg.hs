@@ -1,13 +1,14 @@
 module Reg where
 
 data Reg c
-    = Lit c
-    | Reg c :> Reg c
-    | Reg c :| Reg c
-    | Many (Reg c)
-    | Eps
-    | Empty
-    deriving (Eq,Show)
+    = Lit c           -- jeden znak 
+    | Reg c :> Reg c  -- konkatenacja
+    | Reg c :| Reg c  -- alternatywa (suma)
+  
+    | Many (Reg c)    -- gwiazdka 
+    | Eps             -- slowo puste
+    | Empty           -- jezyk pusty
+    deriving (Eq,Show)   
 
 size :: Reg c -> Int
 size (x :> y) = size x + size y + 1

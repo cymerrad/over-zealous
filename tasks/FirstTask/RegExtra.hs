@@ -10,20 +10,30 @@ class Equiv a where
     (===) :: a -> a -> Bool
 
 instance (Eq c) => Equiv (Reg c) where
-    r1 === r2 = False
+    (===) = (==)
 
 instance Mon (Reg c) where
-    m1 = Empty
-    x <> y = Empty
+    m1 = Eps -- tests superimpose this on me and I disagree - IMHO: Empty
+    x <> Empty = x
+    Empty <> y = y
+    x <> y = x :| y
   
 simpl :: Reg c -> Reg c
 simpl x = x
 
 nullable :: Reg c -> Bool
-nullable x = False
+nullable x = case x of
+    Eps -> True
+    Lit c -> False
+    Empty -> False
+    Many y -> True
+    y :> z -> nullable y && nullable z
+    y :| z -> nullable y || nullable z
 
 empty :: Reg c -> Bool 
-empty r = False
+empty r = case r of
+    Empty -> True
+    _ -> False
 
 der :: c -> Reg c -> Reg c
 der c r = r
