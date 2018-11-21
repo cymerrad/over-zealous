@@ -1,0 +1,67 @@
+-- This file has been generated from package.yaml by hpack version 0.28.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 4fdd795000ccd51c03e8a6578adcbb2089d1b84307a4bf26c5da6f97e6df4f34
+
+name:           over-zealous
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/over-zealous#readme>
+homepage:       https://github.com/githubuser/over-zealous#readme
+bug-reports:    https://github.com/githubuser/over-zealous/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2018 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+extra-source-files:
+    ChangeLog.md
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/over-zealous
+
+library
+  exposed-modules:
+      Lib
+      Mon
+      Reg
+      RegExtra
+  other-modules:
+      Paths_over_zealous
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+  default-language: Haskell2010
+
+executable over-zealous-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_over_zealous
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , over-zealous
+  default-language: Haskell2010
+
+test-suite over-zealous-test
+  type: exitcode-stdio-1.0
+  main-is: TestReg.hs
+  other-modules:
+      Paths_over_zealous
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , over-zealous
+  default-language: Haskell2010
