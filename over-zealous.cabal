@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4fdd795000ccd51c03e8a6578adcbb2089d1b84307a4bf26c5da6f97e6df4f34
+-- hash: b5c9cf704cd96c9387f44edebc2f1256f0cf1e0f1488988cd25e0caf13ea9dc7
 
 name:           over-zealous
 version:        0.1.0.0
@@ -26,7 +26,6 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
       Mon
       Reg
       RegExtra
