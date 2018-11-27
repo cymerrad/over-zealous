@@ -1,4 +1,6 @@
-module Exercises.ThirdLabExpr where
+module Exercises.ThirdLabExpr
+    ()
+where
 
 data Exp
     = EInt Integer                         -- stała całkowita             

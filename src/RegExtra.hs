@@ -3,7 +3,7 @@ import           Mon
 import           Reg
 import           Data.List
 
-data AB = A | B deriving(Eq,Ord,Show)
+-- data AB = A | B deriving(Eq,Ord,Show)
 
 infix 4 ===
 class Equiv a where
@@ -12,14 +12,42 @@ class Equiv a where
 instance (Eq c) => Equiv (Reg c) where
     (===) = (==)
 
+-- instance (Eq c) => Eq (Reg c) where
+--     (==) x1 x2 = case (x1, x2) of
+--         (Lit a, Lit b) -> a == b
+--         (x11 :| x12, x21 :| x22) -> ((x11 == x21) && (x12 == x22)) || ((x11 == x22) && (x12 == x21))
+--         (_, _) -> False
+
+-- this is a syntactic monoid
 instance Mon (Reg c) where
-    m1 = Eps -- tests superimpose this on me and I disagree - IMHO: Empty
+    m1 = Eps
     x <> Eps = x
     Eps <> y = y
-    x <> y = x :| y
+    x <> y = x :> y
 
-simpl :: Reg c -> Reg c
-simpl x = x
+-- case by case I suppose
+simpl :: (Eq c) => Reg c -> Reg c
+simpl (x1 :> x2) = case (x1, x2) of
+    (x11 :> x12, x21 :> x22) -> simpl $ x11 :> (x12 :> (x21 :> x22))
+    (x11 :> x12, _         ) -> simpl $ x11 :> (x12 :> x2)
+    (x11 :| x12, x21 :| x22) ->
+        simpl (x11 :> x21) :| (x11 :> x22) :| (x12 :> x21) :| (x21 :> x22)
+    (x11 :| x12, _         ) -> simpl $ (x11 :> x2) :| (x12 :> x2)
+    (_         , x21 :| x22) -> simpl $ (x1 :> x21) :| (x1 :> x22)
+    (_         , _         ) -> simpl x1 :> simpl x2
+
+simpl (x1 :| x2) = case (x1, x2) of
+    (x11 :| x12, x21 :| x22) ->
+        if ((x11 == x21) && (x12 == x22)) || ((x11 == x22) && (x12 == x21))
+            then x1
+            else simpl x1 :| simpl x2
+    (_, _) -> simpl x1 :| simpl x2
+
+simpl (Lit  x) = Lit x
+simpl (Many x) = Many (simpl x)
+simpl Eps      = Eps
+simpl Empty    = Empty
+
 
 nullable :: Reg c -> Bool
 nullable x = case x of

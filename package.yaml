@@ -14,7 +14,7 @@ copyright: 2018 Author name here
 maintainer: example@example.com
 dependencies:
 - containers
-- containers
+- parsec
 - base >= 4.7 && < 5
 - QuickCheck
 name: over-zealous
@@ -34,6 +34,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - containers
     - over-zealous
+    - containers
+    - parsec
 description: Please see the README on GitHub at <https://github.com/githubuser/over-zealous#readme>

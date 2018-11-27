@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 38cf4e7557374dc6ab9b50ce571fce8d1ba3a70002a9cfd9999a1682992ad584
+-- hash: 9c7c112d39947325d371ce72614789e1756510570cf4affecb13b9c3d633f211
 
 name:           over-zealous
 version:        0.1.0.0
@@ -42,6 +42,7 @@ library
       QuickCheck
     , base >=4.7 && <5
     , containers
+    , parsec
   default-language: Haskell2010
 
 executable over-zealous-exe
@@ -56,6 +57,7 @@ executable over-zealous-exe
     , base >=4.7 && <5
     , containers
     , over-zealous
+    , parsec
   default-language: Haskell2010
 
 test-suite over-zealous-test
@@ -71,4 +73,5 @@ test-suite over-zealous-test
     , base >=4.7 && <5
     , containers
     , over-zealous
+    , parsec
   default-language: Haskell2010
