@@ -1,7 +1,7 @@
 module ThirdLab where
 
 -- import Prelude hiding(Either(..))
-import           FirstLab                       ( flatten )
+import           Exercises.FirstLab             ( flatten )
 import qualified Data.Map                      as Map
 import           Data.Char                      ( isDigit
                                                 , isSpace
