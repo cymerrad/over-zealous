@@ -1,4 +1,4 @@
-module ThirdLab where
+module Exercises.ThirdLab where
 
 -- import Prelude hiding(Either(..))
 import           Exercises.FirstLab             ( flatten )
@@ -189,13 +189,13 @@ infixl 4 <*>
 class Pointed f => Applicative f where
     (<*>) :: f(a->b) -> f a -> f b
 
-instance ThirdLab.Applicative Maybe where
+instance Exercises.ThirdLab.Applicative Maybe where
     (<*>) (Just f) (Just a0) = Just (f a0)
     (<*>) Nothing _ = Nothing
     (<*>) _ Nothing = Nothing
 
-instance ThirdLab.Applicative [] where
-    (<*>) (f:fs) (a0:as) = f a0 : (ThirdLab.<*>) fs as
+instance Exercises.ThirdLab.Applicative [] where
+    (<*>) (f:fs) (a0:as) = f a0 : (Exercises.ThirdLab.<*>) fs as
     (<*>) [] _ = []
     (<*>) _ [] = []
 

@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b5c9cf704cd96c9387f44edebc2f1256f0cf1e0f1488988cd25e0caf13ea9dc7
+-- hash: 38cf4e7557374dc6ab9b50ce571fce8d1ba3a70002a9cfd9999a1682992ad584
 
 name:           over-zealous
 version:        0.1.0.0
@@ -26,6 +26,11 @@ source-repository head
 
 library
   exposed-modules:
+      Exercises.FirstLab
+      Exercises.Quicksort
+      Exercises.SecondLab
+      Exercises.ThirdLab
+      Exercises.ThirdLabExpr
       Mon
       Reg
       RegExtra
@@ -36,6 +41,7 @@ library
   build-depends:
       QuickCheck
     , base >=4.7 && <5
+    , containers
   default-language: Haskell2010
 
 executable over-zealous-exe
@@ -48,6 +54,7 @@ executable over-zealous-exe
   build-depends:
       QuickCheck
     , base >=4.7 && <5
+    , containers
     , over-zealous
   default-language: Haskell2010
 
@@ -62,5 +69,6 @@ test-suite over-zealous-test
   build-depends:
       QuickCheck
     , base >=4.7 && <5
+    , containers
     , over-zealous
   default-language: Haskell2010
